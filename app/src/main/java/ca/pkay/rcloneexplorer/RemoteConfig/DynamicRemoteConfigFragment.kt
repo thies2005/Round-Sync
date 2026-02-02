@@ -96,7 +96,8 @@ class DynamicRemoteConfigFragment(private val mProviderTitle: String, private va
             "yandex",
             "drive",
             "google photos",
-            "onedrive"
+            "onedrive",
+            "internxt"
             -> true
             else -> false
         }
