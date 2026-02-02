@@ -294,8 +294,8 @@ public class OauthHelper {
      * A step that triggers on Internxt 2FA prompt and shows a dialog for code input.
      */
     public static class InternxtTwoFactorStep extends InteractiveRunner.Step {
-        // Internxt prompts with "Two-factor authentication code" or "config_2fa"
-        private static final String TRIGGER = "authentication code";
+        // Internxt prompts with "2FA code is required"
+        private static final String TRIGGER = "2FA code";
 
         public InternxtTwoFactorStep(Context context) {
             super(TRIGGER, InteractiveRunner.Step.CONTAINS, InteractiveRunner.Step.INTERLEAVED,
