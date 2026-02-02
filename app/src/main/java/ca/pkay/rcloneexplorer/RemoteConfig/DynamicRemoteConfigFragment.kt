@@ -97,7 +97,7 @@ class DynamicRemoteConfigFragment(private val mProviderTitle: String, private va
             "drive",
             "google photos",
             "onedrive",
-            "internxt"
+            "internxt"  // Internxt uses interactive multi-step auth with optional 2FA
             -> true
             else -> false
         }
