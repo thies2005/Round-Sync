@@ -535,7 +535,7 @@ class DynamicRemoteConfigFragment(private val mProviderTitle: String, private va
         if(mUseOauth){
             mAuthTask = ConfigCreate(
                 options, mFormView!!, mAuthView!!,
-                requireContext(), rclone!!
+                requireContext(), rclone!!, mProvider?.name ?: ""
             ).execute()
         } else {
             RemoteConfigHelper.setupAndWait(context, options)
