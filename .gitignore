@@ -73,3 +73,11 @@ debug/
 .idea/codeStyles/codeStyleConfig.xml
 .idea/inspectionProfiles/Project_Default.xml
 .idea/
+
+# Node (not used by this Android project)
+node_modules/
+package.json
+package-lock.json
+
+# Local ZCode IDE state
+.zcode/

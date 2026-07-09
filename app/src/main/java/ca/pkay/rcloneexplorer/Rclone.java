@@ -804,10 +804,59 @@ public class Rclone {
     }
 
     public Process sync(RemoteItem remoteItem, String localPath, String remotePath, int syncDirection, boolean useMD5Sum, ArrayList<FilterEntry> filters, boolean deleteExcluded, String transfersOverride) {
+        // Cloud-to-cloud directions require a second remote; route to the dedicated overload.
+        if (syncDirection == SyncDirectionObject.SYNC_REMOTE_TO_REMOTE
+                || syncDirection == SyncDirectionObject.COPY_REMOTE_TO_REMOTE) {
+            return null;
+        }
+        return syncLocalRemote(remoteItem, localPath, remotePath, syncDirection, useMD5Sum, filters, deleteExcluded, transfersOverride);
+    }
+
+    /**
+     * Cloud-to-cloud sync/copy between two remotes. The primary {@code remoteItem/remotePath} pair is
+     * the source; {@code remoteItem2/remotePath2} is the destination. rclone performs a server-side
+     * copy when the backend pair supports it, otherwise data streams through this device's rclone
+     * process.
+     */
+    public Process sync(RemoteItem remoteItem, String remotePath, RemoteItem remoteItem2, String remotePath2, int syncDirection, boolean useMD5Sum, ArrayList<FilterEntry> filters, boolean deleteExcluded, String transfersOverride) {
+        if (syncDirection != SyncDirectionObject.SYNC_REMOTE_TO_REMOTE
+                && syncDirection != SyncDirectionObject.COPY_REMOTE_TO_REMOTE) {
+            return null;
+        }
         String[] command;
-        String remoteName = remoteItem.getName();
-        String localRemotePath = (remoteItem.isRemoteType(RemoteItem.LOCAL)) ? getLocalRemotePathPrefix(remoteItem, context)  + "/" : "";
-        String remoteSection = (remotePath.compareTo("//" + remoteName) == 0) ? remoteName + ":" + localRemotePath : remoteName + ":" + localRemotePath + remotePath;
+        String srcSection = buildRemoteSection(remoteItem, remotePath, context);
+        String dstSection = buildRemoteSection(remoteItem2, remotePath2, context);
+        String op = (syncDirection == SyncDirectionObject.SYNC_REMOTE_TO_REMOTE) ? "sync" : "copy";
+
+        ArrayList<String> defaultParameter = new ArrayList<>(Arrays.asList("--transfers", getTransfers(transfersOverride), "--stats=1s", "--stats-log-level", "NOTICE", "--use-json-log"));
+        if (useMD5Sum) {
+            defaultParameter.add("--checksum");
+        }
+        if (deleteExcluded) {
+            defaultParameter.add("--delete-excluded");
+        }
+        for (FilterEntry filter : filters) {
+            defaultParameter.add("--filter");
+            defaultParameter.add((filter.filterType == FilterEntry.FILTER_INCLUDE ? "+ " : "- ") + filter.filter);
+        }
+
+        ArrayList<String> directionParameter = new ArrayList<>();
+        Collections.addAll(directionParameter, op, srcSection, dstSection);
+        directionParameter.addAll(defaultParameter);
+        command = createCommandWithOptions(directionParameter);
+
+        String[] env = getRcloneEnv();
+        try {
+            return getRuntimeProcess(command, env);
+        } catch (IOException e) {
+            FLog.e(TAG, "sync: error starting rclone", e);
+            return null;
+        }
+    }
+
+    private Process syncLocalRemote(RemoteItem remoteItem, String localPath, String remotePath, int syncDirection, boolean useMD5Sum, ArrayList<FilterEntry> filters, boolean deleteExcluded, String transfersOverride) {
+        String[] command;
+        String remoteSection = buildRemoteSection(remoteItem, remotePath, context);
 
         ArrayList<String> defaultParameter = new ArrayList<>(Arrays.asList("--transfers", getTransfers(transfersOverride), "--stats=1s", "--stats-log-level", "NOTICE", "--use-json-log"));
         ArrayList<String> directionParameter = new ArrayList<>();
@@ -1729,6 +1778,22 @@ public class Rclone {
      * @param context
      * @return
      */
+    /**
+     * Builds the canonical {@code remoteName:[localPrefix]path} argument rclone expects for a
+     * remote endpoint. Centralizes the {@code "//"+name} root-sentinel handling and the LOCAL-remote
+     * storage prefix that were duplicated across call sites. Used for both source and destination
+     * of cloud-to-cloud operations.
+     */
+    public static String buildRemoteSection(RemoteItem remoteItem, String remotePath, Context context) {
+        String remoteName = remoteItem.getName();
+        String localRemotePath = (remoteItem.isRemoteType(RemoteItem.LOCAL))
+                ? getLocalRemotePathPrefix(remoteItem, context) + "/" : "";
+        if (("//" + remoteName).equals(remotePath)) {
+            return remoteName + ":" + localRemotePath;
+        }
+        return remoteName + ":" + localRemotePath + remotePath;
+    }
+
     public static String getLocalRemotePathPrefix(RemoteItem item, Context context) {
         if (item.isPathAlias()) {
             return "";

@@ -167,23 +167,45 @@ class SyncWorker (private var mContext: Context, workerParams: WorkerParameters)
             try {
                 val taskFilter = if(mTask.filterId != null ) mDatabase.getFilter(mTask.filterId!!) else null;
                 val taskFilterList = taskFilter?.getFilters() ?: ArrayList()
-                sRcloneProcess = mRclone.sync(
-                    remoteItem,
-                    mTask.localPath,
-                    mTask.remotePath,
-                    mTask.direction,
-                    mTask.md5sum,
-                    taskFilterList,
-                    mTask.deleteExcluded,
-                    mTask.transfers?.toString()
-                )
+                val isCloudToCloud = mTask.direction == SyncDirectionObject.SYNC_REMOTE_TO_REMOTE
+                        || mTask.direction == SyncDirectionObject.COPY_REMOTE_TO_REMOTE
+                sRcloneProcess = if (isCloudToCloud) {
+                    val remoteItem2 = RemoteItem(mTask.remoteId2, mTask.remoteType2, "")
+                    mRclone.sync(
+                        remoteItem,
+                        mTask.remotePath,
+                        remoteItem2,
+                        mTask.remotePath2,
+                        mTask.direction,
+                        mTask.md5sum,
+                        taskFilterList,
+                        mTask.deleteExcluded,
+                        mTask.transfers?.toString()
+                    )
+                } else {
+                    mRclone.sync(
+                        remoteItem,
+                        mTask.localPath,
+                        mTask.remotePath,
+                        mTask.direction,
+                        mTask.md5sum,
+                        taskFilterList,
+                        mTask.deleteExcluded,
+                        mTask.transfers?.toString()
+                    )
+                }
                 if (sRcloneProcess == null) {
                     failureReason = FAILURE_REASON.RCLONE_ERROR
                     log("Sync: Rclone process could not be started for direction ${mTask.direction}")
                     return
                 }
                 handleSync(mTitle)
-                sendUploadFinishedBroadcast(remoteItem.name, mTask.remotePath)
+                if (isCloudToCloud) {
+                    // Refresh any open FileExplorer on the destination remote so copied content appears.
+                    sendUploadFinishedBroadcast(mTask.remoteId2, mTask.remotePath2)
+                } else {
+                    sendUploadFinishedBroadcast(remoteItem.name, mTask.remotePath)
+                }
             } finally {
                 transferLocks?.release()
             }
@@ -194,7 +216,9 @@ class SyncWorker (private var mContext: Context, workerParams: WorkerParameters)
         return direction == SyncDirectionObject.SYNC_LOCAL_TO_REMOTE ||
                direction == SyncDirectionObject.SYNC_REMOTE_TO_LOCAL ||
                direction == SyncDirectionObject.COPY_LOCAL_TO_REMOTE ||
-               direction == SyncDirectionObject.COPY_REMOTE_TO_LOCAL
+               direction == SyncDirectionObject.COPY_REMOTE_TO_LOCAL ||
+               direction == SyncDirectionObject.SYNC_REMOTE_TO_REMOTE ||
+               direction == SyncDirectionObject.COPY_REMOTE_TO_REMOTE
     }
 
     private fun handleSync(title: String) {

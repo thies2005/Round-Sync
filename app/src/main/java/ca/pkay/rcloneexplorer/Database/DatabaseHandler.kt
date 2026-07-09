@@ -18,6 +18,9 @@ import ca.pkay.rcloneexplorer.Database.DatabaseInfo.Companion.SQL_UPDATE_TASK_AD
 import ca.pkay.rcloneexplorer.Database.DatabaseInfo.Companion.SQL_UPDATE_TASK_ADD_FOLLOWUPS_FAIL
 import ca.pkay.rcloneexplorer.Database.DatabaseInfo.Companion.SQL_UPDATE_TASK_ADD_FOLLOWUPS_SUCCESS
 import ca.pkay.rcloneexplorer.Database.DatabaseInfo.Companion.SQL_UPDATE_TASK_ADD_TRANSFERS
+import ca.pkay.rcloneexplorer.Database.DatabaseInfo.Companion.SQL_UPDATE_TASK_ADD_REMOTE_ID2
+import ca.pkay.rcloneexplorer.Database.DatabaseInfo.Companion.SQL_UPDATE_TASK_ADD_REMOTE_TYPE2
+import ca.pkay.rcloneexplorer.Database.DatabaseInfo.Companion.SQL_UPDATE_TASK_ADD_REMOTE_PATH2
 import ca.pkay.rcloneexplorer.Database.DatabaseInfo.Companion.SQL_UPDATE_TRIGGER_ADD_TYPE
 import ca.pkay.rcloneexplorer.Items.Filter
 import ca.pkay.rcloneexplorer.Items.Task
@@ -39,6 +42,9 @@ class DatabaseHandler(context: Context?) :
         sqLiteDatabase.execSQL(SQL_UPDATE_TASK_ADD_FOLLOWUPS_FAIL)
         sqLiteDatabase.execSQL(SQL_UPDATE_TASK_ADD_FOLLOWUPS_SUCCESS)
         sqLiteDatabase.execSQL(SQL_UPDATE_TASK_ADD_TRANSFERS)
+        sqLiteDatabase.execSQL(SQL_UPDATE_TASK_ADD_REMOTE_ID2)
+        sqLiteDatabase.execSQL(SQL_UPDATE_TASK_ADD_REMOTE_TYPE2)
+        sqLiteDatabase.execSQL(SQL_UPDATE_TASK_ADD_REMOTE_PATH2)
     }
 
     override fun onUpgrade(sqLiteDatabase: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
@@ -63,6 +69,11 @@ class DatabaseHandler(context: Context?) :
         }
         if (oldVersion < 7) {
             sqLiteDatabase.execSQL(SQL_UPDATE_TASK_ADD_TRANSFERS)
+        }
+        if (oldVersion < 8) {
+            sqLiteDatabase.execSQL(SQL_UPDATE_TASK_ADD_REMOTE_ID2)
+            sqLiteDatabase.execSQL(SQL_UPDATE_TASK_ADD_REMOTE_TYPE2)
+            sqLiteDatabase.execSQL(SQL_UPDATE_TASK_ADD_REMOTE_PATH2)
         }
     }
 
@@ -149,7 +160,10 @@ class DatabaseHandler(context: Context?) :
             Task.COLUMN_NAME_DELETE_EXCLUDED,
             Task.COLUMN_NAME_ONFAIL_FOLLOWUP,
             Task.COLUMN_NAME_ONSUCCESS_FOLLOWUP,
-            Task.COLUMN_NAME_TRANSFERS
+            Task.COLUMN_NAME_TRANSFERS,
+            Task.COLUMN_NAME_REMOTE_ID2,
+            Task.COLUMN_NAME_REMOTE_TYPE2,
+            Task.COLUMN_NAME_REMOTE_PATH2
         )
 
     private fun taskFromCursor(cursor: Cursor): Task {
@@ -167,6 +181,10 @@ class DatabaseHandler(context: Context?) :
         task.onFailFollowup = cursor.getLong(11)
         task.onSuccessFollowup = cursor.getLong(12)
         task.transfers = if (cursor.isNull(13)) null else cursor.getInt(13)
+        // Columns added in v8 are NULL for rows created under older schema versions; coalesce to defaults.
+        task.remoteId2 = cursor.getString(14) ?: ""
+        task.remoteType2 = cursor.getInt(15)
+        task.remotePath2 = cursor.getString(16) ?: ""
         return task
     }
 
@@ -200,6 +218,9 @@ class DatabaseHandler(context: Context?) :
         values.put(Task.COLUMN_NAME_ONFAIL_FOLLOWUP, task.onFailFollowup)
         values.put(Task.COLUMN_NAME_ONSUCCESS_FOLLOWUP, task.onSuccessFollowup)
         values.put(Task.COLUMN_NAME_TRANSFERS, task.transfers)
+        values.put(Task.COLUMN_NAME_REMOTE_ID2, task.remoteId2)
+        values.put(Task.COLUMN_NAME_REMOTE_TYPE2, task.remoteType2)
+        values.put(Task.COLUMN_NAME_REMOTE_PATH2, task.remotePath2)
         return values
     }
 
