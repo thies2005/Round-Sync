@@ -106,6 +106,11 @@ class InternxtReauth(
             }
 
             val jsonOutput = StringBuilder()
+            // Capture stderr so we can surface a real failure reason instead of a
+            // generic "error" toast. Lines that may carry secrets (tokens,
+            // passwords, Authorization headers) are filtered out and never logged
+            // or shown to the user.
+            val stderrCapture = StringBuilder()
             val outputReader = Thread {
                 proc.inputStream.bufferedReader().useLines { lines ->
                     lines.forEach { jsonOutput.append(it).append('\n') }
@@ -113,7 +118,11 @@ class InternxtReauth(
             }
             val errorReader = Thread {
                 proc.errorStream.bufferedReader().useLines { lines ->
-                    lines.forEach { /* drain stderr without logging sensitive data */ }
+                    lines.forEach { line ->
+                        if (!containsSecret(line)) {
+                            stderrCapture.append(line).append('\n')
+                        }
+                    }
                 }
             }
 
@@ -124,16 +133,18 @@ class InternxtReauth(
             outputReader.join(1000)
             errorReader.join(1000)
 
+            val stderrSummary = stderrCapture.toString().trim()
+
             if (!completed) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) proc.destroyForcibly() else proc.destroy()
-                errorMessage = context.getString(R.string.error_creating_remote)
+                errorMessage = describeError("Internxt reauth timed out", stderrSummary)
                 FLog.e(TAG, "Internxt reauth timed out")
                 return false
             }
 
             if (proc.exitValue() != 0) {
-                errorMessage = context.getString(R.string.error_creating_remote)
-                FLog.e(TAG, "Internxt reauth failed")
+                errorMessage = describeError("Internxt reauth failed (exit ${proc.exitValue()})", stderrSummary)
+                FLog.e(TAG, "Internxt reauth failed. stderr: $stderrSummary")
                 return false
             }
 
@@ -158,8 +169,8 @@ class InternxtReauth(
                     ""
                 }
             } catch (e: Exception) {
-                errorMessage = context.getString(R.string.error_creating_remote)
-                FLog.e(TAG, "Failed to parse Internxt reauth state", e)
+                errorMessage = describeError("Failed to parse Internxt reauth state", stderrSummary)
+                FLog.e(TAG, "Failed to parse Internxt reauth state. stdout=$jsonStr stderr=$stderrSummary", e)
                 return false
             }
         }
@@ -268,6 +279,35 @@ class InternxtReauth(
             ).show()
         }
     }
+}
+
+/**
+ * Heuristic check for lines that may carry credentials. Used to keep tokens,
+ * passwords and Authorization headers out of both the user-facing error toast
+ * and the logcat output.
+ */
+private fun containsSecret(line: String): Boolean {
+    val lower = line.lowercase()
+    return lower.contains("token") || lower.contains("password") ||
+        lower.contains("pass") || lower.contains("secret") ||
+        lower.contains("bearer") || lower.contains("authorization") ||
+        lower.contains("mnemonic") || lower.contains("credential")
+}
+
+/**
+ * Builds a user-facing error message from a short reason and the (already
+ * secret-filtered) rclone stderr. Caps the stderr excerpt so the toast stays
+ * readable; the full filtered stderr is logged separately.
+ */
+private fun describeError(reason: String, stderrSummary: String): String {
+    if (stderrSummary.isEmpty()) {
+        return reason
+    }
+    val excerpt = stderrSummary.lineSequence()
+        .filter { it.isNotBlank() }
+        .joinToString(" ")
+        .take(160)
+    return "$reason: $excerpt"
 }
 
 private fun Process.waitForQuietly(timeout: Long, unit: TimeUnit): Boolean {

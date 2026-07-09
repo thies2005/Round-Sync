@@ -5,6 +5,7 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.PendingIntent.FLAG_IMMUTABLE
+import android.app.PendingIntent.FLAG_UPDATE_CURRENT
 import android.content.Context
 import android.content.Intent
 import android.os.Build
@@ -12,6 +13,7 @@ import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import ca.pkay.rcloneexplorer.Activities.MainActivity
+import ca.pkay.rcloneexplorer.AppShortcutsHelper
 import ca.pkay.rcloneexplorer.R
 import ca.pkay.rcloneexplorer.util.PermissionManager
 import ca.pkay.rcloneexplorer.util.SyncLog
@@ -77,13 +79,21 @@ class AppErrorNotificationManager(var mContext: Context) {
 
     @SuppressLint("MissingPermission")
     fun showSessionExpiredNotification(remoteName: String) {
+        // Deep-link directly into the Internxt re-auth flow: tapping the
+        // notification opens MainActivity with the REAUTH action and the remote
+        // name, which triggers InternxtReauth instead of just landing on the
+        // remotes list. Vary the request code per remote (via hashCode) and use
+        // FLAG_UPDATE_CURRENT so distinct remotes get distinct, fresh intents.
+        val requestCode = SESSION_EXPIRED_ID + remoteName.hashCode()
         val contentIntent = PendingIntent.getActivity(
             mContext,
-            SESSION_EXPIRED_ID,
+            requestCode,
             Intent(mContext, MainActivity::class.java).apply {
+                action = MainActivity.MAIN_ACTIVITY_START_REAUTH
                 flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+                putExtra(AppShortcutsHelper.APP_SHORTCUT_REMOTE_NAME, remoteName)
             },
-            FLAG_IMMUTABLE
+            FLAG_IMMUTABLE or FLAG_UPDATE_CURRENT
         )
 
         val notificationText = mContext.getString(
@@ -103,7 +113,7 @@ class AppErrorNotificationManager(var mContext: Context) {
         val notificationManager = NotificationManagerCompat.from(mContext)
 
         if(PermissionManager(mContext).grantedNotifications()) {
-            notificationManager.notify(SESSION_EXPIRED_ID, b.build())
+            notificationManager.notify(requestCode, b.build())
         } else {
             Log.e("AppErrorNotificationManager", "We dont have Notification Permission!")
         }
