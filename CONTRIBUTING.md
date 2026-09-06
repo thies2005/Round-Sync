@@ -12,7 +12,7 @@ We welcome any contribution to CloudBridge, and there are multiple ways to contr
 ## Reporting a bug
 No one likes it if something goes wrong. However, before submitting a bug report, please make sure to check the following links:
 
-- [CloudBridge documentation](https://CloudBridge.com/)
+- [CloudBridge documentation](https://thies2005.github.io/CloudBridge/)
 - [search existing issues](https://github.com/thies2005/CloudBridge/issues?q=is%3Aissue)
 - [rclone documentation](https://rclone.org/)
 - [rclone forum](https://forum.rclone.org/)

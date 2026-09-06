@@ -80,11 +80,11 @@ android {
 
     flavorDimensions += 'edition'
     productFlavors {
-        // Default GitHub and Google Play build
+        // Round-Sync edition flavor (currently identical to oss, kept for compatibility)
         rs {
             dimension 'edition'
         }
-        // OSS build
+        // OSS build — the default for GitHub releases and Google Play
         oss {
             dimension 'edition'
         }

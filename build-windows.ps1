@@ -77,7 +77,7 @@ switch ($choice) {
         Write-Host "APKs are in: app\build\outputs\apk\oss\debug\" -ForegroundColor White
         Write-Host ""
         Write-Host "For Pixel 9, install:" -ForegroundColor Cyan
-        Write-Host "  roundsync_v*-oss-arm64-v8a-debug.apk" -ForegroundColor White
+        Write-Host "  cloudbridge_v*-oss-arm64-v8a-debug.apk" -ForegroundColor White
     }
 
     "2" {

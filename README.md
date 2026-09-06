@@ -33,7 +33,7 @@ Visit [https://thies2005.github.io/CloudBridge/](https://thies2005.github.io/Clo
 - **Integration** (Access local storage devices and share files with the application to store them on a remote)
 - **Many cloud storage providers** (all via rclone config import, some without ui-setup)
 - **Material 3 Design** (Dark theme)
-- **All architectures** (runs on ARM, ARM64, x86 and x64 devices, Android 7+)
+- **All architectures** (runs on ARM, ARM64, x86 and x64 devices, Android 6+)
 - **Storage Access Framework (SAF)** ([see docs](https://thies2005.github.io/CloudBridge/internals.html#storage-access-framework)) for SD card and USB device access.
 - **Intentservice** to start tasks via third party apps!
 - **Task Management** to allow regular runs of your important tasks!
@@ -49,7 +49,7 @@ Grab the [latest version](https://github.com/thies2005/CloudBridge/releases/late
 |Intel/AMD 32 Bit | some TV boxes and tablets | ```x86``` |
 |Intel/AMD 64 Bit | some emulators | ```x86_64``` |
 
-If you don't know which version to pick use ```CloudBridge-<version>-universal-release.apk```. Most devices run ARM 64 Bit, and 64 Bit devices often can also run the respective 32 bit version at lower performance. The app runs on any phone, tablet or TV with Android 7 or newer, as long as you have a touchscreen or mouse.
+If you don't know which version to pick use ```cloudbridge_v<version>-oss-universal-release.apk```. Most devices run ARM 64 Bit, and 64 Bit devices often can also run the respective 32 bit version at lower performance. The app runs on any phone, tablet or TV with Android 6 or newer, as long as you have a touchscreen or mouse.
 
 [<img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png"
     alt="Get it on Google Play"
@@ -116,13 +116,13 @@ You can then build the app normally from Android Studio or from CLI by running:
 
 
 ## License
-This app is released under the terms of the [GPLv3 license](https://github.com/thies2005/CloudBridge/blob/master/LICENSE). Community contributions are licensed under the MIT license, and [CLA Assistant](https://cla-assistant.io/) will ask you to confirm [a CLA stating that](https://gist.githubusercontent.com/x0b/889f037d76706fc9e3ab8ee1c047841b/raw/67c028b19e33111428904558cfda0c01039d1574/rcloneExplorer-cla-202001) if create a PR.
+This app is released under the terms of the [GPLv3 license](https://github.com/thies2005/CloudBridge/blob/master/LICENSE). By submitting a pull request, you agree that your contributions are licensed under the GPLv3 as well.
 
 
 ## About this app
-This is a fork of [**CloudBridge**](https://github.com/thies2005/CloudBridge) which is a fork of [**RCX**](https://github.com/x0b/rcx) by **x0b**<sup>[x0b](https://github.com/x0b)</sup> which is itself a fork of [**rcloneExplorer**](https://github.com/patrykcoding/rcloneExplorer) by **Patryk Kaczmarkiewicz**<sup>[patrykcoding](https://github.com/patrykcoding)</sup>.
+CloudBridge is a fork of [**Round-Sync**](https://github.com/newhinton/Round-Sync) by **Felix Nüsse**<sup>[newhinton](https://github.com/newhinton)</sup>, which is a fork of [**RCX**](https://github.com/x0b/rcx) by **x0b**<sup>[x0b](https://github.com/x0b)</sup>, which is itself a fork of [**rcloneExplorer**](https://github.com/patrykcoding/rcloneExplorer) by **Patryk Kaczmarkiewicz**<sup>[patrykcoding](https://github.com/patrykcoding)</sup>.
 
-As the upstream CloudBridge project has seen a lack of recent development and updates, CloudBridge was created to provide active maintenance, easy accessibility via releases on Google Play, and critical fixes.
+CloudBridge was created to provide active maintenance, regular rclone updates, easy accessibility via releases on GitHub and Google Play, and extra features such as robust Internxt support.
 
 If you want to convey a modified version (fork), we ask you to use a different name, app icon and package id as well as proper attribution to avoid user confusion.
 
