@@ -679,7 +679,7 @@
     <string name="task_run_on_failure">Run on Failure</string>
     <string name="task_run_on_success">Run on Success</string>
     <string name="notification_reports_title">Task Reports</string>
-    <string name="stopping_everything">Round Sync: Stopping everything</string>
+    <string name="stopping_everything">CloudBridge: Stopping everything</string>
     <string name="couldnt_find_activity">Couldn\'t find activity to start</string>
     <string name="install_webview_retry">Install WebView and try again</string>
     <string name="all_storage_accessible">You can now access all local storage</string>
