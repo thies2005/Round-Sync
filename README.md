@@ -51,12 +51,9 @@ Grab the [latest version](https://github.com/thies2005/CloudBridge/releases/late
 
 If you don't know which version to pick use ```CloudBridge-<version>-universal-release.apk```. Most devices run ARM 64 Bit, and 64 Bit devices often can also run the respective 32 bit version at lower performance. The app runs on any phone, tablet or TV with Android 7 or newer, as long as you have a touchscreen or mouse.
 
-[<img src="https://f-droid.org/badge/get-it-on.png"
-    alt="Get it on F-Droid"
-    height="80">](https://f-droid.org/packages/de.schuelken.cloudbridge)
-[<img src="https://gitlab.com/IzzyOnDroid/repo/-/raw/master/assets/IzzyOnDroid.png"
-    alt="Get it on IzzyOnDroid"
-    height="80">](https://apt.izzysoft.de/packages/de.schuelken.cloudbridge)
+[<img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png"
+    alt="Get it on Google Play"
+    height="80">](https://play.google.com/store/apps/details?id=de.schuelken.cloudbridge)
 
 ## Usage
 [See the documentation](https://cloudbridge.schuelken.uk/).
@@ -77,22 +74,26 @@ The intent needs the following:
 
 ## Libraries
 - [rclone](https://github.com/rclone/rclone) - Calling this a library is an understatement. Without rclone, there would not be CloudBridge. See https://rclone.org/donate/ to support rclone.
-- [Jetpack AndroidX](https://developer.android.com/license)
+- [Jetpack AndroidX](https://developer.android.com/license) - AppCompat, RecyclerView, ConstraintLayout, WorkManager, DataStore, Lifecycle, SplashScreen and more.
+- [Material Components](https://github.com/material-components/material-components-android) - Material 3 widgets and theming.
+- [Kotlin Coroutines](https://github.com/Kotlin/kotlinx.coroutines) and [kotlinx.serialization](https://github.com/Kotlin/kotlinx.serialization) - Async work and JSON serialization.
 - [Floating Action Button SpeedDial](https://github.com/leinardi/FloatingActionButtonSpeedDial) - A Floating Action Button Speed Dial implementation for Android that follows the Material Design specification.
 - [Glide](https://github.com/bumptech/glide) - An image loading and caching library for Android focused on smooth scrolling.
 - [MarkdownJ](https://github.com/myabc/markdownj) - converts markdown into HTML.
-- [Material Design Icons](https://github.com/Templarian/MaterialDesign) - 2200+ Material Design Icons from the Community.
+- [OkHttp](https://github.com/square/okhttp) - HTTP client used for provider APIs and authentication.
+- [Jackson](https://github.com/FasterXML/jackson-core) - JSON processing.
+- [NanoHTTPD](https://github.com/NanoHttpd/NanoHttpd) - Embedded HTTP server used for serving files and the SAF/WebDAV bridge.
 - [Recyclerview Animators](https://github.com/wasabeef/recyclerview-animators) - An Android Animation library which easily add itemanimator to RecyclerView items.
 - [Toasty](https://github.com/GrenderG/Toasty) - The usual Toast, but with steroids.
+- [AppIntro](https://github.com/AppIntro/AppIntro) - Onboarding introduction screens.
+- [RFC 3339 Date Parser](https://github.com/x0b/rfc3339parser) - Timestamp parsing.
+- [App Update Checker](https://github.com/Sharkaboi/AppUpdateChecker) - Checks GitHub for new app versions.
+- [android-retrofuture / android-retrostreams](https://github.com/streamsupport/streamsupport) - Java 8+ streams and CompletableFuture backports.
 - Icons from [Flaticon](https://www.flaticon.com) courtesy of [Smashicons](https://www.flaticon.com/authors/smashicons) and [Freepik](https://www.flaticon.com/authors/freepik)
 
 
-## Contributing
-See [CONTRIBUTING](./CONTRIBUTING.md)
-
-Anyone is welcome to contribute and help out. However, hate, discrimination and racism are decidedly unwelcome here. If you feel offended by this, you might belong to the group of people who are not welcome. I will not tolerate hate in any way.
-
-If you want to add more translations, see our [weblate-project](https://hosted.weblate.org/projects/CloudBridge/CloudBridge/)!
+## Contact & Contributions
+Whether you have a question, found a bug, or have an idea for a new feature — you are welcome to write me at [136268370+thies2005@users.noreply.github.com](mailto:136268370+thies2005@users.noreply.github.com). Pull requests and feature requests are always welcome!
 
 ## Developing
 
@@ -130,3 +131,4 @@ If you want to convey a modified version (fork), we ask you to use a different n
 This fork adds explicit support and fixes for the following providers:
 - **Internxt**: Decentralized cloud storage. Included is a robust integration with automatic token renewal and state persistence to ensure the remote connection does not expire.
 - **Drime**: Cloud storage provider.
+- **Always up to date**: CloudBridge is regularly updated to the newest rclone version, so new providers, features and fixes arrive quickly.
