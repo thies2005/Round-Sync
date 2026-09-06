@@ -84,7 +84,9 @@ jobs:
 
       - name: Build release APKs and Play AAB
         env:
-          CB_STORE_FILE: app/.config/android/cloudbridge-release.keystore
+          # Resolved by app/build.gradle's file() against the app module dir,
+          # so it must be relative to app/, not to the repo root.
+          CB_STORE_FILE: .config/android/cloudbridge-release.keystore
           CB_STORE_PASSWORD: ${{ secrets.CB_STORE_PASSWORD }}
           CB_KEY_ALIAS: ${{ secrets.CB_KEY_ALIAS }}
           CB_KEY_PASSWORD: ${{ secrets.CB_KEY_PASSWORD }}
