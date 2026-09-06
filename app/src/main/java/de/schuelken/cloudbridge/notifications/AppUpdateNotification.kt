@@ -6,6 +6,7 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Build
 import android.util.Log
 import androidx.core.app.NotificationCompat
@@ -14,7 +15,6 @@ import ca.pkay.rcloneexplorer.R
 import ca.pkay.rcloneexplorer.util.PermissionManager
 import de.schuelken.cloudbridge.extensions.tag
 import de.schuelken.cloudbridge.updates.UpdateUserchoiceReceiver
-import de.schuelken.cloudbridge.updates.UpdateUserchoiceReceiver.Companion.ACTION_DOWNLOAD
 import de.schuelken.cloudbridge.updates.UpdateUserchoiceReceiver.Companion.ACTION_IGNORE
 import de.schuelken.cloudbridge.updates.UpdateUserchoiceReceiver.Companion.IGNORE_VERSION_EXTRA
 
@@ -24,6 +24,7 @@ class AppUpdateNotification(private var mContext: Context) {
     companion object {
         var NOTIFICATION_CHANNEL_ID = "NOTIFICATION_CHANNEL_ID"
         var NOTIFICATION_ID = 63598
+        var RELEASES_URL = "https://github.com/thies2005/CloudBridge/releases/latest"
     }
 
     @SuppressLint("MissingPermission") // Handled by PermissionManager
@@ -33,9 +34,10 @@ class AppUpdateNotification(private var mContext: Context) {
             .setSmallIcon(R.drawable.appicon)
             .setContentTitle(mContext.getString(R.string.app_update_notification_title))
             .setContentText(mContext.getString(R.string.app_update_notification_description, version))
+            .setContentIntent(getOpenReleasesIntent())
             .setPriority(NotificationCompat.PRIORITY_LOW)
             .addAction(R.drawable.ic_twotone_cancel_24, mContext.getString(R.string.app_updates_notification_action_ignore), getIgnoreVersionIntent(version))
-            .addAction(R.drawable.ic_check, mContext.getString(R.string.app_updates_notification_action_apply), getApplyIntent())
+            .addAction(R.drawable.ic_check, mContext.getString(R.string.app_updates_notification_action_apply), getOpenReleasesIntent())
             .setAutoCancel(true)
 
         val notificationManager = NotificationManagerCompat.from(mContext)
@@ -54,10 +56,11 @@ class AppUpdateNotification(private var mContext: Context) {
         return PendingIntent.getBroadcast(mContext, 0, ignoreIntent, PendingIntent.FLAG_IMMUTABLE)
     }
 
-    private fun getApplyIntent(): PendingIntent {
-        val downloadIntent = Intent(mContext, UpdateUserchoiceReceiver::class.java)
-        downloadIntent.setAction(ACTION_DOWNLOAD)
-        return PendingIntent.getBroadcast(mContext, 0, downloadIntent, PendingIntent.FLAG_IMMUTABLE)
+    private fun getOpenReleasesIntent(): PendingIntent {
+        // Notification-only updater: point the user to the release page instead of
+        // downloading/installing APKs in-app (not allowed for Google Play builds).
+        val openIntent = Intent(Intent.ACTION_VIEW, Uri.parse(RELEASES_URL))
+        return PendingIntent.getActivity(mContext, 0, openIntent, PendingIntent.FLAG_IMMUTABLE)
     }
 
     private fun createNotificationChannel() {

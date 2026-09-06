@@ -199,9 +199,9 @@
     <string name="title_activity_remote_config">Select type</string>
     <string name="error_exporting_config_file">Error exporting config file</string>
     <string name="app_update_notification_title">App update available!</string>
-    <string name="app_update_notification_description">Version %1$s was found! Do you want to apply it?</string>
+    <string name="app_update_notification_description">A new version (%1$s) might be available. Tap to open the release page.</string>
     <string name="app_updates_notification_action_ignore">Ignore Update</string>
-    <string name="app_updates_notification_action_apply">Apply Update</string>
+    <string name="app_updates_notification_action_apply">Open Release Page</string>
     <string name="app_updates_notifications">Get notified about app updates</string>
     <string name="app_update_notification_channel_name">Update Notifications</string>
     <string name="app_update_notification_channel_description">Shows notifications related to app updates</string>
