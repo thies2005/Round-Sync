@@ -108,7 +108,7 @@ open class IdentifiableSwitchAppIntroFragment : AppIntroBaseFragment(), SlidePol
         }
     }
 
-    override fun onCheckedChanged(buttonView: CompoundButton?, isChecked: Boolean) {
+    override fun onCheckedChanged(buttonView: CompoundButton, isChecked: Boolean) {
         switchCallback?.switchChanged(slideId, isChecked)
     }
 }

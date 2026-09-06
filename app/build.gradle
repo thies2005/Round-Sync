@@ -29,8 +29,8 @@ android {
         vectorDrawables.generatedDensities = []
         applicationId 'de.schuelken.cloudbridge'
         minSdkVersion 23
-        compileSdk 35
-        targetSdkVersion 35
+        compileSdk 36
+        targetSdkVersion 36
         // CI bumps these per beta via CB_VERSION_CODE / CB_VERSION_NAME env vars.
         // versionCode must end in 0 (last digit reserved for ABI offsets).
         versionCode System.getenv('CB_VERSION_CODE') ? System.getenv('CB_VERSION_CODE').toInteger() : 20
@@ -63,6 +63,11 @@ android {
         release {
             minifyEnabled true
             shrinkResources true
+            // Strip debug symbols from the packaged .so files; Play Console
+            // extracts them for native (librclone) crash/ANR symbolization.
+            ndk {
+                debugSymbolLevel 'SYMBOL_TABLE'
+            }
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             manifestPlaceholders = [
                     appIcon: "@mipmap/ic_launcher",
