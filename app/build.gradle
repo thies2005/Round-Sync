@@ -223,7 +223,4 @@ dependencies {
 
     // Splash screen
     implementation("androidx.core:core-splashscreen:1.0.1")
-
-    //Updates
-    implementation 'com.github.Sharkaboi:AppUpdateChecker:v1.0.5'
 }
