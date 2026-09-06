@@ -1,9 +1,9 @@
 # CloudBridge - Rclone for Android
 [![license: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://github.com/thies2005/CloudBridge/blob/master/LICENSE) [![Latest Downloads](https://img.shields.io/github/downloads/thies2005/CloudBridge/latest/total)](https://github.com/thies2005/CloudBridge/releases) [![GitHub release](https://img.shields.io/github/v/release/thies2005/CloudBridge?include_prereleases)](https://github.com/thies2005/CloudBridge/releases/latest)
-[![Documentation](https://img.shields.io/badge/Documentation-cloudbridge.schuelken.uk-4aad4e)](https://cloudbridge.schuelken.uk)
+[![Documentation](https://img.shields.io/badge/Documentation-GitHub_Pages-4aad4e)](https://thies2005.github.io/CloudBridge/)
 [![Android Lint](https://github.com/thies2005/CloudBridge/actions/workflows/lint.yml/badge.svg)](https://github.com/thies2005/CloudBridge/actions/workflows/lint.yml)
 A cloud file manager, powered by rclone.
-Visit [https://cloudbridge.schuelken.uk](https://cloudbridge.schuelken.uk) for more information!
+Visit [https://thies2005.github.io/CloudBridge/](https://thies2005.github.io/CloudBridge/) for more information!
 
 
 ## Screenshots
@@ -34,7 +34,7 @@ Visit [https://cloudbridge.schuelken.uk](https://cloudbridge.schuelken.uk) for m
 - **Many cloud storage providers** (all via rclone config import, some without ui-setup)
 - **Material 3 Design** (Dark theme)
 - **All architectures** (runs on ARM, ARM64, x86 and x64 devices, Android 7+)
-- **Storage Access Framework (SAF)** ([see docs](https://cloudbridge.schuelken.uk/usage/saf.html)) for SD card and USB device access.
+- **Storage Access Framework (SAF)** ([see docs](https://thies2005.github.io/CloudBridge/internals.html#storage-access-framework)) for SD card and USB device access.
 - **Intentservice** to start tasks via third party apps!
 - **Task Management** to allow regular runs of your important tasks!
 
@@ -56,7 +56,7 @@ If you don't know which version to pick use ```CloudBridge-<version>-universal-r
     height="80">](https://play.google.com/store/apps/details?id=de.schuelken.cloudbridge)
 
 ## Usage
-[See the documentation](https://cloudbridge.schuelken.uk/).
+[See the documentation](https://thies2005.github.io/CloudBridge/).
 
 
 ## Intents
