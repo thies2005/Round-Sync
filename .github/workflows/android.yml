@@ -82,7 +82,7 @@ jobs:
           mkdir -p app/.config/android
           echo "$CB_KEYSTORE_BASE64" | base64 -d > app/.config/android/cloudbridge-release.keystore
 
-      - name: Build release APKs
+      - name: Build release APKs and Play AAB
         env:
           CB_STORE_FILE: app/.config/android/cloudbridge-release.keystore
           CB_STORE_PASSWORD: ${{ secrets.CB_STORE_PASSWORD }}
@@ -91,22 +91,13 @@ jobs:
         run: |
           echo "Building OSS Release APKs..."
           ./gradlew assembleOssRelease
+          echo "Building Play AAB..."
+          ./gradlew bundleOssRelease -PnoAbiSplits
 
-      - name: List built APKs
-        run: find app/build/outputs/apk -name '*.apk' -exec ls -lh {} \;
-
-      - name: Delete previous beta releases
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: List built artifacts
         run: |
-          CURRENT_TAG="${{ steps.app-version.outputs.tag }}"
-          gh release list --json tagName -q '.[].tagName' | grep '\-beta\.' | while read -r tag; do
-            if [ -z "$tag" ] || [ "$tag" = "$CURRENT_TAG" ]; then
-              continue
-            fi
-            echo "Deleting old beta release: $tag"
-            gh release delete "$tag" --yes --cleanup-tag 2>/dev/null || true
-          done
+          find app/build/outputs/apk -name '*.apk' -exec ls -lh {} \;
+          find app/build/outputs/bundle -name '*.aab' -exec ls -lh {} \;
 
       - name: Create beta release
         uses: softprops/action-gh-release@3bb12739c298aeb8a4eeaf626c5b8d85266b0e65 # v2
@@ -129,9 +120,11 @@ jobs:
             - **x86_64** — emulators / ChromeOS
             - **x86** — older emulators
             - **universal** — all architectures (larger file)
+            - **Play AAB** — Android App Bundle (.aab) for Google Play upload
           files: |
             app/build/outputs/apk/oss/release/*-oss-armeabi-v7a-release.apk
             app/build/outputs/apk/oss/release/*-oss-arm64-v8a-release.apk
             app/build/outputs/apk/oss/release/*-oss-x86-release.apk
             app/build/outputs/apk/oss/release/*-oss-x86_64-release.apk
             app/build/outputs/apk/oss/release/*-oss-universal-release.apk
+            app/build/outputs/bundle/ossRelease/*.aab

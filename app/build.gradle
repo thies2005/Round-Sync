@@ -92,7 +92,8 @@ android {
 
     splits {
         abi {
-            enable true
+            // AAB builds fail while APK splits are enabled; pass -PnoAbiSplits for bundleOssRelease
+            enable !project.hasProperty('noAbiSplits')
             reset()
             include 'x86', 'x86_64', 'armeabi-v7a', 'arm64-v8a'
             universalApk true
